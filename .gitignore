@@ -1,0 +1,6 @@
+/build
+/bin
+/assets/brickadia
+/x64-Debug/
+CMakeSettings.json
+.vs/
