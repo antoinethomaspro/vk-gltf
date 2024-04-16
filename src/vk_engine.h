@@ -5,6 +5,7 @@
 
 #include <vk_types.h>
 #include <vk_descriptors.h>
+#include <vk_loader.h>
 
 struct ComputePushConstants {
 	glm::vec4 data1;
@@ -58,6 +59,15 @@ public:
 	VkPipeline _gradientPipeline;
 	VkPipelineLayout _gradientPipelineLayout;
 
+	VkPipelineLayout _trianglePipelineLayout;
+	VkPipeline _trianglePipeline;
+
+	VkPipelineLayout _meshPipelineLayout;
+	VkPipeline _meshPipeline;
+
+	GPUMeshBuffers rectangle;
+	std::vector<std::shared_ptr<MeshAsset>> testMeshes;
+	
 	DescriptorAllocator globalDescriptorAllocator;
 
 	VkDescriptorSet _drawImageDescriptors;
@@ -65,6 +75,7 @@ public:
 
 	//draw resources
 	AllocatedImage _drawImage;
+	AllocatedImage _depthImage;
 	VkExtent2D _drawExtent;
 
 	VmaAllocator _allocator;
@@ -109,13 +120,19 @@ public:
 	VkExtent2D _swapchainExtent;
 	DeletionQueue _mainDeletionQueue;
 
+	GPUMeshBuffers uploadMesh(std::span<uint32_t> indices, std::span<Vertex> vertices);
+	AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
+	void destroy_buffer(const AllocatedBuffer& buffer);
 
+	void draw_geometry(VkCommandBuffer cmd);
 
 	void draw_background(VkCommandBuffer cmd);
 	void draw_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
 
 
 private:
+	void init_mesh_pipeline();
+	void init_triangle_pipeline();
 	void init_imgui();
 	void init_pipelines();
 	void init_background_pipelines();
@@ -126,4 +143,5 @@ private:
 	void init_swapchain();
 	void init_commands();
 	void init_sync_structures();
+	void init_default_data();
 };
