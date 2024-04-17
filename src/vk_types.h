@@ -75,3 +75,20 @@ struct GPUSceneData {
     glm::vec4 sunlightDirection; // w for sun power
     glm::vec4 sunlightColor;
 };
+
+enum class MaterialPass :uint8_t {
+    MainColor,
+    Transparent,
+    Other
+};
+struct MaterialPipeline {
+    VkPipeline pipeline;
+    VkPipelineLayout layout;
+};
+
+struct MaterialInstance {
+    MaterialPipeline* pipeline;
+    VkDescriptorSet materialSet;
+    MaterialPass passType;
+};
+
