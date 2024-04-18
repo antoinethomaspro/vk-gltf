@@ -38,7 +38,7 @@ void VulkanEngine::update_scene()
         m.second->Draw(glm::mat4{ 1.f }, mainDrawContext);
     }
 
-    for (int x = -3; x < 6; x++) {
+    for (int x = -3; x < 3; x++) {
 
         glm::mat4 scale = glm::scale(glm::vec3{ 0.2 });
         glm::mat4 translation = glm::translate(glm::vec3{ x, 1, 0 });

@@ -1,5 +1,6 @@
 ﻿// vulkan_guide.h : Include file for standard system include files,
 // or project specific include files.
+//> intro
 #pragma once
 
 #include <memory>
@@ -19,17 +20,11 @@
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
+//< intro
 
 
-#define VK_CHECK(x)                                                     \
-    do {                                                                \
-        VkResult err = x;                                               \
-        if (err) {                                                      \
-            fmt::println("Detected Vulkan error: {}", string_VkResult(err)); \
-            abort();                                                    \
-        }                                                               \
-    } while (0)
 
+// we will add our main reusable types here
 struct AllocatedImage {
     VkImage image;
     VkImageView imageView;
@@ -44,6 +39,41 @@ struct AllocatedBuffer {
     VmaAllocationInfo info;
 };
 
+struct GPUGLTFMaterial {
+    glm::vec4 colorFactors;
+    glm::vec4 metal_rough_factors;
+    glm::vec4 extra[14];
+};
+
+static_assert(sizeof(GPUGLTFMaterial) == 256);
+
+struct GPUSceneData {
+    glm::mat4 view;
+    glm::mat4 proj;
+    glm::mat4 viewproj;
+    glm::vec4 ambientColor;
+    glm::vec4 sunlightDirection; // w for sun power
+    glm::vec4 sunlightColor;
+};
+
+//> mat_types
+enum class MaterialPass :uint8_t {
+    MainColor,
+    Transparent,
+    Other
+};
+struct MaterialPipeline {
+    VkPipeline pipeline;
+    VkPipelineLayout layout;
+};
+
+struct MaterialInstance {
+    MaterialPipeline* pipeline;
+    VkDescriptorSet materialSet;
+    MaterialPass passType;
+};
+//< mat_types
+//> vbuf_types
 struct Vertex {
 
     glm::vec3 position;
@@ -66,32 +96,9 @@ struct GPUDrawPushConstants {
     glm::mat4 worldMatrix;
     VkDeviceAddress vertexBuffer;
 };
+//< vbuf_types
 
-struct GPUSceneData {
-    glm::mat4 view;
-    glm::mat4 proj;
-    glm::mat4 viewproj;
-    glm::vec4 ambientColor;
-    glm::vec4 sunlightDirection; // w for sun power
-    glm::vec4 sunlightColor;
-};
-
-enum class MaterialPass :uint8_t {
-    MainColor,
-    Transparent,
-    Other
-};
-struct MaterialPipeline {
-    VkPipeline pipeline;
-    VkPipelineLayout layout;
-};
-
-struct MaterialInstance {
-    MaterialPipeline* pipeline;
-    VkDescriptorSet materialSet;
-    MaterialPass passType;
-};
-
+//> node_types
 struct DrawContext;
 
 // base class for a renderable dynamic object
@@ -128,5 +135,14 @@ struct Node : public IRenderable {
         }
     }
 };
-
-
+//< node_types
+//> intro
+#define VK_CHECK(x)                                                     \
+    do {                                                                \
+        VkResult err = x;                                               \
+        if (err) {                                                      \
+             fmt::print("Detected Vulkan error: {}", string_VkResult(err)); \
+            abort();                                                    \
+        }                                                               \
+    } while (0)
+//< intro
