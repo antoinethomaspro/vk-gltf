@@ -7,6 +7,29 @@
 #include <vk_descriptors.h>
 #include <vk_loader.h>
 
+struct MeshNode : public Node {
+
+	std::shared_ptr<MeshAsset> mesh;
+
+	virtual void Draw(const glm::mat4& topMatrix, DrawContext& ctx) override;
+};
+
+struct RenderObject {
+	uint32_t indexCount;
+	uint32_t firstIndex;
+	VkBuffer indexBuffer;
+
+	MaterialInstance* material;
+
+	glm::mat4 transform;
+	VkDeviceAddress vertexBufferAddress;
+};
+
+struct DrawContext {
+	std::vector<RenderObject> OpaqueSurfaces;
+};
+
+
 struct ComputePushConstants {
 	glm::vec4 data1;
 	glm::vec4 data2;
@@ -79,6 +102,9 @@ constexpr unsigned int FRAME_OVERLAP = 2;
 
 class VulkanEngine {
 public:
+	DrawContext mainDrawContext;
+	std::unordered_map<std::string, std::shared_ptr<Node>> loadedNodes;
+
 	MaterialInstance defaultData;
 	GLTFMetallic_Roughness metalRoughMaterial;
 
@@ -137,6 +163,8 @@ public:
 	struct SDL_Window* _window{ nullptr };
 
 	static VulkanEngine& Get();
+
+	void update_scene();
 
 	//initializes everything in the engine
 	void init();
