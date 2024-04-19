@@ -6,6 +6,7 @@
 #include <vk_types.h>
 #include <vk_descriptors.h>
 #include <vk_loader.h>
+#include <camera.h>
 
 struct MeshNode : public Node {
 
@@ -102,6 +103,7 @@ constexpr unsigned int FRAME_OVERLAP = 2;
 
 class VulkanEngine {
 public:
+	Camera mainCamera;
 	DrawContext mainDrawContext;
 	std::unordered_map<std::string, std::shared_ptr<Node>> loadedNodes;
 
