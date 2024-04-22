@@ -11,6 +11,10 @@
 #include <fastgltf/parser.hpp>
 #include <fastgltf/tools.hpp>
 
+std::string getDefaultMeshName(size_t index) {
+    return "UnnamedMesh_" + std::to_string(index);
+}
+
 std::optional<std::vector<std::shared_ptr<MeshAsset>>> loadGltfMeshes(VulkanEngine* engine, std::filesystem::path filePath)
 {
     //> openmesh
@@ -58,10 +62,19 @@ std::optional<std::vector<std::shared_ptr<MeshAsset>>> loadGltfMeshes(VulkanEngi
     // often
     std::vector<uint32_t> indices;
     std::vector<Vertex> vertices;
+
+    size_t meshIndex = 0;
     for (fastgltf::Mesh& mesh : gltf.meshes) {
         MeshAsset newmesh;
 
-        newmesh.name = mesh.name;
+        if (!mesh.name.empty()) {
+            newmesh.name = mesh.name;
+        }
+        else {
+            newmesh.name = getDefaultMeshName(meshIndex);
+        }
+
+        ++meshIndex;
 
         // clear the mesh arrays each mesh, we dont want to merge them by error
         indices.clear();
