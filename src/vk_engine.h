@@ -142,8 +142,8 @@ public:
 	
 	DescriptorAllocatorGrowable globalDescriptorAllocator;
 
-	VkDescriptorSet _drawImageDescriptors;
-	VkDescriptorSetLayout _drawImageDescriptorLayout;
+	VkDescriptorSet _gBufferDescSet;
+	VkDescriptorSetLayout _gBufferDescLayout;
 
 	AllocatedImage _whiteImage;
 	AllocatedImage _blackImage;
@@ -206,7 +206,6 @@ public:
 
 	void draw_geometry(VkCommandBuffer cmd);
 
-	void draw_background(VkCommandBuffer cmd);
 	void draw_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
 
 	AllocatedImage create_image(VkExtent3D size, VkFormat format, VkImageUsageFlags usage, bool mipmapped = false);
@@ -215,10 +214,14 @@ public:
 
 
 private:
+	AllocatedImage _gPosition;
+	AllocatedImage _gNormal;
+	AllocatedImage _gAlbedoSpec;
+
+	void init_GBuffer();
 	void init_mesh_pipeline();
 	void init_imgui();
 	void init_pipelines();
-	void init_background_pipelines();
 	void init_descriptors();
 	void create_swapchain(uint32_t width, uint32_t height);
 	void destroy_swapchain();

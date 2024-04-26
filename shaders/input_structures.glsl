@@ -17,3 +17,12 @@ layout(set = 1, binding = 0) uniform GLTFMaterialData{
 
 layout(set = 1, binding = 1) uniform sampler2D colorTex;
 layout(set = 1, binding = 2) uniform sampler2D metalRoughTex;
+
+mat4 uniformScaleMat4(float scaleFactor) {
+    return mat4(
+        scaleFactor, 0.0, 0.0, 0.0,
+        0.0, scaleFactor, 0.0, 0.0,
+        0.0, 0.0, scaleFactor, 0.0,
+        0.0, 0.0, 0.0, 1.0
+    );
+}
