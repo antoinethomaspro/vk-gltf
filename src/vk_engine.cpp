@@ -48,7 +48,7 @@ void VulkanEngine::update_scene()
     sceneData.proj = projection;
     sceneData.viewproj = projection * view;
 
-    loadedNodes["Suzanne"]->Draw(glm::mat4{ 1.f }, mainDrawContext);
+    loadedScenes["structure"]->Draw(glm::mat4{ 1.f }, mainDrawContext);
 
     //some default lighting parameters
     sceneData.ambientColor = glm::vec4(.1f);
@@ -100,6 +100,13 @@ void VulkanEngine::init()
 
     mainCamera.pitch = 0;
     mainCamera.yaw = 0;
+
+    std::string structurePath = { "../assets/structure.glb" };
+    auto structureFile = loadGltf(this, structurePath);
+
+    assert(structureFile.has_value());
+
+    loadedScenes["structure"] = *structureFile;
 
 }
 
@@ -434,11 +441,6 @@ GPUMeshBuffers VulkanEngine::uploadMesh(std::span<uint32_t> indices, std::span<V
         });
 
     destroy_buffer(staging);
-
-    _mainDeletionQueue.push_function([=]() {
-        destroy_buffer(newSurface.indexBuffer);
-        destroy_buffer(newSurface.vertexBuffer);
-        });
 
     return newSurface;
 }
@@ -851,8 +853,6 @@ void VulkanEngine::init_sync_structures()
 
 void VulkanEngine::init_default_data()
 {
-    testMeshes = loadGltfMeshes(this, "..\\assets\\basicmesh.glb").value();
-
     //3 default textures, white, grey, black. 1 pixel each
     uint32_t white = 0xFFFFFFFF;
     _whiteImage = create_image((void*)&white, VkExtent3D{ 1, 1, 1 }, VK_FORMAT_R8G8B8A8_UNORM,
@@ -923,21 +923,7 @@ void VulkanEngine::init_default_data()
     defaultData = metalRoughMaterial.write_material(_device, MaterialPass::MainColor, materialResources, globalDescriptorAllocator);
     //< default_mat
 
-    //> default_meshes
-    for (auto& m : testMeshes) {
-        std::shared_ptr<MeshNode> newNode = std::make_shared<MeshNode>();
-        newNode->mesh = m;
-
-        newNode->localTransform = glm::mat4{ 1.f };
-        newNode->worldTransform = glm::mat4{ 1.f };
-
-        for (auto& s : newNode->mesh->surfaces) {
-            s.material = std::make_shared<GLTFMaterial>(defaultData);
-        }
-
-        loadedNodes[m->name] = std::move(newNode);
-    }
-    //< default_meshes
+ 
    
 }
 
@@ -946,6 +932,7 @@ void VulkanEngine::cleanup()
     if (_isInitialized) {
         //make sure the gpu has stopped doing its things
         vkDeviceWaitIdle(_device);
+        loadedScenes.clear();
         for (int i = 0; i < FRAME_OVERLAP; i++) {
             _frames[i]._deletionQueue.flush();
         }
