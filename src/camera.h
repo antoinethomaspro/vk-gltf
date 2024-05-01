@@ -14,6 +14,7 @@ public:
 
     glm::mat4 getViewMatrix();
     glm::mat4 getRotationMatrix();
+    glm::vec3 getEyePos();
 
     void processSDLEvent(SDL_Event& e);
 

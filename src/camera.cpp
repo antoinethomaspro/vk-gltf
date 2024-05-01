@@ -19,6 +19,12 @@ glm::mat4 Camera::getViewMatrix()
     return glm::inverse(cameraTranslation * cameraRotation);
 }
 
+glm::vec3 Camera::getEyePos()
+{
+    return position;
+}
+
+
 glm::mat4 Camera::getRotationMatrix()
 {
     // fairly typical FPS style camera. we join the pitch and yaw rotations into
@@ -29,6 +35,7 @@ glm::mat4 Camera::getRotationMatrix()
 
     return glm::toMat4(yawRotation) * glm::toMat4(pitchRotation);
 }
+
 
 void Camera::processSDLEvent(SDL_Event& e)
 {

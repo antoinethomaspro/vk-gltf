@@ -24,7 +24,6 @@
 #include <thread>
 constexpr bool bUseValidationLayers = true;
 
-#define CHAPTER_STAGE 2
 
 VulkanEngine* loadedEngine = nullptr;
 
@@ -118,6 +117,7 @@ void VulkanEngine::update_scene()
     sceneData.ambientColor = glm::vec4(0.01f);
     sceneData.sunlightColor = glm::vec4(1.f);
     sceneData.sunlightDirection = glm::vec4(0, 1, 0, 1.f);
+    sceneData.eyePosition = mainCamera.getEyePos();
 }
 
 void VulkanEngine::immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function)
@@ -1171,7 +1171,7 @@ void VulkanEngine::run()
 void GLTFMetallic_Roughness::build_pipelines(VulkanEngine* engine)
 {
     VkShaderModule meshFragShader;
-    if (!vkutil::load_shader_module("../shaders/mesh.frag.spv", engine->_device, &meshFragShader)) {
+    if (!vkutil::load_shader_module("../shaders/brdf.frag.spv", engine->_device, &meshFragShader)) {
         fmt::println("Error when building the triangle fragment shader module");
     }
 
