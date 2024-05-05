@@ -11,9 +11,10 @@ layout (location = 3) in vec2 inUV;
 layout (location = 0) out vec4 outFragColor;
 
 // material parameters
-vec3 albedo =  texture(metalRoughTex,inUV).xyz;
-float metallic = 1.0;
-float roughness = 0.2;
+vec3 albedo =  texture(colorTex,inUV).xyz * materialData.colorFactors.xyz;
+vec2 metallic_roughness = texture(metalRoughTex, inUV).yz;
+float metallic =  metallic_roughness.y * materialData.metal_rough_factors.x;
+float roughness = metallic_roughness.x * materialData.metal_rough_factors.y;
 float ao = 1.0;
 
 // lights
@@ -66,6 +67,10 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 // ----------------------------------------------------------------------------
 void main()
 {		
+
+    // gamma decode
+    albedo = pow(albedo, vec3(2.2)); 
+
     vec3 N = normalize(inNormal);
     vec3 V = normalize(camPos - FragPos);
 
@@ -119,9 +124,11 @@ void main()
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));
-    // gamma correct
+    // gamma encode
    color = pow(color, vec3(1.0/2.2)); 
+    albedo = pow(albedo, vec3(1.0/2.2)); 
 
-    outFragColor = vec4(albedo, 1.0);
+
+    outFragColor = vec4(color, 1.0);
 }
 
