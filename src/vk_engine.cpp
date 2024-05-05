@@ -85,6 +85,13 @@ void VulkanEngine::init()
     mainCamera.pitch = 0;
     mainCamera.yaw = 0;
 
+    std::string structurePath = { "../assets/suzanne/suzanne.gltf" };
+    auto structureFile = loadGltf(this, structurePath);
+
+    assert(structureFile.has_value());
+
+    loadedScenes["structure"] = *structureFile;
+
 
     //everything went fine
     _isInitialized = true;
@@ -109,8 +116,10 @@ void VulkanEngine::update_scene()
         glm::mat4 scale = glm::scale(glm::vec3{ 0.2 });
         glm::mat4 translation = glm::translate(glm::vec3{ 0, 0, 0 });
 
+        loadedScenes["structure"]->Draw(glm::mat4{ 1.f }, mainDrawContext);
+
     //loadedNodes["UnnamedMesh_0"]->Draw(glm::vec3{0.02f}, mainDrawContext);
-    loadedNodes["Suzanne"]->Draw(translation, mainDrawContext);
+   // loadedNodes["Suzanne"]->Draw(translation, mainDrawContext);
  //   loadedNodes["Suzanne"]->Draw(translation * scale, mainDrawContext);
 
     //some default lighting parameters
@@ -973,7 +982,7 @@ void VulkanEngine::init_default_data()
     defaultData = metalRoughMaterial.write_material(_device, MaterialPass::MainColor, materialResources, globalDescriptorAllocator);
 //< default_mat
 
-    testMeshes = loadGltfMeshes(this, "../assets/Suzanne/Suzanne.gltf").value();
+ //   testMeshes = loadGltfMeshes(this, "../assets/Suzanne/Suzanne.gltf").value();
   //  sponzaTest = loadGltfMeshes(this, "../assets/Sponza/Sponza.gltf").value();
  //   fmt::print("Number of surfaces in testMeshes[0]: {}\n", sponzaTest[0]->surfaces.size());
 
@@ -999,6 +1008,7 @@ void VulkanEngine::cleanup()
     if (_isInitialized) {
         //make sure the gpu has stopped doing its things
         vkDeviceWaitIdle(_device);
+        loadedScenes.clear();
         for (int i = 0; i < FRAME_OVERLAP; i++) {
             _frames[i]._deletionQueue.flush();
         }

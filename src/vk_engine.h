@@ -107,6 +107,7 @@ constexpr unsigned int FRAME_OVERLAP = 2;
 
 class VulkanEngine {
 public:
+	std::unordered_map<std::string, std::shared_ptr<LoadedGLTF>> loadedScenes;
 	DrawContext mainDrawContext;
 	std::unordered_map<std::string, std::shared_ptr<Node>> loadedNodes;
 

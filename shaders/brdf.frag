@@ -12,12 +12,12 @@ layout (location = 0) out vec4 outFragColor;
 
 // material parameters
 vec3 albedo = vec3(1.0, 0.0, 0.0);
-float metallic = 0.5;
-float roughness = 0.5;
+float metallic = 1.0;
+float roughness = 0.2;
 float ao = 1.0;
 
 // lights
-vec3 lightPos = vec3(4.0, 10.0, 4.0);
+vec3 lightPos = vec3(0.0, 0.0, 4.0);
 vec3 lightColor = vec3(1.0, 1.0, 1.0);
 
 vec3 camPos = sceneData.eyePos;
