@@ -11,7 +11,7 @@ layout (location = 3) in vec2 inUV;
 layout (location = 0) out vec4 outFragColor;
 
 // material parameters
-vec3 albedo = vec3(1.0, 0.0, 0.0);
+vec3 albedo =  texture(metalRoughTex,inUV).xyz;
 float metallic = 1.0;
 float roughness = 0.2;
 float ao = 1.0;
@@ -122,6 +122,6 @@ void main()
     // gamma correct
    color = pow(color, vec3(1.0/2.2)); 
 
-    outFragColor = vec4(color, 1.0);
+    outFragColor = vec4(albedo, 1.0);
 }
 
